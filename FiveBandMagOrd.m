@@ -22,14 +22,14 @@ function [gaps,Emins,Emaxs]=FiveBandMagOrd(M,Ma,chemPot)
 % parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
-	w = exp(2*pi*i/3) ; cw = conj(w) ;
+	w = exp(2*pi*i/3) ;
 	
 	t0 = 80 ;
 	
 	a = 0.25 ;
 	b = 0.2 ;
 	c = 0.1 ;
-	d = 0.67 ; ccd = conj(d) ;
+	d = 0.67 ;
 
 
 	muPz = -0.043.*t0 ;
@@ -60,54 +60,23 @@ function [gaps,Emins,Emaxs]=FiveBandMagOrd(M,Ma,chemPot)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % function for tightbinding Hamiltonian
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-asdfasg
-
-gfds
-	% matrix to implement time reversal transformation
-	mtrs = eye(5); 
-	mtrs(2:3,2:3) = -sx ;
 	
-	function hamOut=symHam(p1,p2)
+	function out=symHam(p1,p2)
 		
-		phi11 = exp(i*(p1+p2)) ; cphi11 = conj(phi11) ;
-		phi10 = exp(i*p1) ; cphi10 = conj(phi10) ;
-		phi01 = exp(i*p2) ; cphi01 = conj(phi01) ;
+		phi11 = exp(i*(p1+p2)) ;
+		phi10 = exp(i*p1) ;
+		phi01b = exp(-i*p2) ;
 		
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		% 1st valley
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		rho1v1 = [ i*a*( phi11 - phi10 ) ; b*phi11 + c*phi10 ; c*phi11 + b*phi10 ; ... 
-			ccd*phi10 ; d ] ;
-		rho2v1 = [ i*a*( 1.0 - phi11 ) ; w*( b + c*phi11 ) ; conj(w)*( c + b*phi11 ) ; ...
-			ccd ; d ] ;
-		rho3v1 = [ i*a*( phi10 - 1.0 ) ; conj(w)*( b*phi10 + c ) ; w*( c*phi10 + b ) ; ...
-			ccd*phi01b ; d ] ;
+		rho1 = [ i*a*( phi11 - phi10 ) ; b*phi11 + c*phi10 ; c*phi11 + b*phi10 ; ... 
+			conj(d)*phi10 ; d ] ;
+		rho2 = [ i*a*( 1.0 - phi11 ) ; w*( b + c*phi11 ) ; conj(w)*( c + b*phi11 ) ; ...
+			conj(d) ; d ] ;
+		rho3 = [ i*a*( phi10 - 1.0 ) ; conj(w)*( b*phi10 + c ) ; w*( c*phi10 + b ) ; ...
+			conj(d)*phi01b ; d ] ;
 			
-		rhov1 = [ rho1v1, rho2v1, rho3v1 ] ;
+		rho = [ rho1, rho2, rho3 ] ;
 		
-		ham1 = rhov1*(rhov1') ;
-		
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		% 2st valley
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		rho1v2 = [ -i*a*( phi11 - phi10 ) ; b*phi11 + c*phi10 ; c*phi11 + b*phi10 ; ... 
-			d*phi10 ; ccd ] ;
-		rho2v2 = [ -i*a*( 1.0 - phi11 ) ; cw*( b + c*phi11 ) ; w*( c + b*phi11 ) ; ...
-			d ; ccd ] ;
-		rho3v2 = [ -i*a*( phi10 - 1.0 ) ; c*( b*phi10 + c ) ; cw*( c*phi10 + b ) ; ...
-			d*phi01b ; ccd ] ;
-			
-		rhov2 = [ rho1v2, rho2v2, rho3v2 ] ;
-		
-		ham2 = rhov2*(rhov2') ;
-		
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		% together
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		
-		hamOut = [ ham1, eye(5) ; eye(5), ham2 ] ;
+		out = rho*(rho') ;
 	
 	end
 
@@ -115,7 +84,9 @@ gfds
 % calculate
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
 
-	EnKp = zeros(Nvec,Nvec,24) ;
+	E1 = zeros(Nvec) ; E2 = E1 ; E3 = E1 ; E4 = E1 ; E5 = E1 ;
+	E6 = E1 ; E7 = E1 ; E8 = E1 ; E9 = E1 ; E10 = E1 ;
+	
 
 	for n=1:Ntot
 		
