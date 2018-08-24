@@ -61,6 +61,8 @@ function [gaps,Emins,Emaxs]=FiveBandMagOrd(M,Ma,chemPot)
 % function for tightbinding Hamiltonian
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 asdfasg
+
+gfds
 	% matrix to implement time reversal transformation
 	mtrs = eye(5); 
 	mtrs(2:3,2:3) = -sx ;
